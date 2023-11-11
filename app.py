@@ -3,10 +3,10 @@
 from fastapi import FastAPI
 from packages.routes import router as api_router
 
-app = FastAPI()
+app = FastAPI(title="My API Gateway")
 
 app.include_router(api_router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=7888)
