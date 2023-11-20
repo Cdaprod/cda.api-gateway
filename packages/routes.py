@@ -31,4 +31,4 @@ async def handle_webhook(notification: Notification):
         if record.s3.bucket.name == 'data-dump':
             result = await process_text_data(record.s3.object.key)
             results.append(result)
-    return {"message": "Webhook processed", "results": results, "errors": errors}
+    return {"message": "Webhook processed", "results": results, "errors": errors} 

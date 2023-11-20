@@ -1,0 +1,190 @@
+openapi: 3.0.0
+info:
+  title: Custom API-AI Gateway for MinIO LANGCHAIN and Weaviate
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+    description: Main production server
+paths:
+  /health:
+    get:
+      summary: Health Check Endpoint
+      operationId: getHealthCheck
+      responses:
+        '200':
+          description: Returns the health status of the API
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+  /:
+    get:
+      summary: Root Endpoint
+      operationId: getRoot
+      responses:
+        '200':
+          description: Welcome message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /minio-events/:
+    post:
+      summary: Handle MinIO Event
+      operationId: postMinioEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventType:
+                  type: string
+                eventData:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Acknowledgement of the event
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /minio-webhook/:
+    post:
+      summary: Handle MinIO Webhook
+      operationId: postMinioWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      responses:
+        '200':
+          description: Results of the webhook processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  results:
+                    type: array
+                    items:
+                      type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+  /process/{bucket_name}:
+    get:
+      summary: Process Specified Bucket
+      operationId: getProcessBucket
+      parameters:
+        - in: path
+          name: bucket_name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Response after processing the bucket
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    post:
+      summary: Process Specified Bucket
+      operationId: postProcessBucket
+      parameters:
+        - in: path
+          name: bucket_name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Response after processing the bucket
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /upload-clean-data:
+    post:
+      summary: Upload and Process Clean Data
+      operationId: postUploadCleanData
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Acknowledgement of file upload and processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /get-code-snippet:
+    get:
+      summary: Retrieve a Code Snippet
+      operationId: getCodeSnippet
+      responses:
+        '200':
+          description: Returns the requested code snippet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+components:
+  schemas:
+    Notification:
+      type: object
+      properties:
+        Records:
+          type: array
+          items:
+            type: object
+            properties:
+              s3:
+                type: object
+                properties:
+                  bucket:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                  object:
+                    type: object
+                    properties:
+                      key:
+                        type: string
